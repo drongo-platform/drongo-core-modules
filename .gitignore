@@ -1,0 +1,10 @@
+# Python stuff
+env
+.ropeproject
+*.py[cdo]
+__pycache__
+.DS_Store
+
+.pytest_cache
+htmlcov/
+.coverage

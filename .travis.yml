@@ -1,0 +1,24 @@
+language: python
+services:
+  - mongodb
+before_script:
+  - sleep 15
+python:
+  - "2.7"
+  - "3.3"
+  - "3.4"
+  - "3.5"
+  - "3.6"
+  - "pypy"
+  - "pypy3"
+
+before_install: "pip install codecov"
+install: "python setup.py install"
+script:
+  - pip install -r requirements.txt
+  - pip install git+https://github.com/drongo-platform/drongo-core.git
+  - flake8 drongo
+  - flake8 nest
+  - py.test --cov
+after_success:
+  codecov

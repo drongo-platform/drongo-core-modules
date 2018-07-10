@@ -1,0 +1,8 @@
+graft drongo
+graft drongo_utils
+graft drongo_modules
+graft nest
+graft drongo_app
+
+global-exclude __pycache__
+global-exclude *.py[co]
