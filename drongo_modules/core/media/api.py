@@ -12,7 +12,7 @@ class MediaServe(ViewEndpoint):
         self.media = self.ctx.modules.media
 
     def call(self):
-        self.init() # TODO: Fix this
+        self.init()  # TODO: Fix this
 
         self.media.services.MediaServeService(
             container=self.container,

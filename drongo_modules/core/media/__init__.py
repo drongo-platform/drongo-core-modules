@@ -1,1 +1,1 @@
-from .module import Media
+from .module import Media  # noqa: F401

@@ -1,5 +1,6 @@
 import re
 
+
 class UsernameValidator(object):
     def __init__(self, api, username):
         self.api = api

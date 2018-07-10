@@ -8,6 +8,13 @@ from functools import partial
 from drongo import HttpResponseHeaders
 
 
+class FileNotFoundException(Exception):
+    pass
+
+
+FileNotFoundError = FileNotFoundException()
+
+
 class Filesystem(object):
     def __init__(self, app, **config):
         self.app = app

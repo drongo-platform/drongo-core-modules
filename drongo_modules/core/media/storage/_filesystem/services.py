@@ -152,9 +152,8 @@ class MediaServeService(MediaServiceBase):
         expires = expires.strftime('%a, %d %b %Y %H:%M:%S GMT')
 
         self.response.set_header(HttpResponseHeaders.CACHE_CONTROL,
-                                'max-age=%d' % self.AGE)
+                                 'max-age=%d' % self.AGE)
         self.response.set_header(HttpResponseHeaders.EXPIRES, expires)
-
 
         self.response.set_header(
             HttpResponseHeaders.CONTENT_TYPE, media_file.mimetype)

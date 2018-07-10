@@ -1,1 +1,1 @@
-from .module import Database
+from .module import Database  # noqa: F401

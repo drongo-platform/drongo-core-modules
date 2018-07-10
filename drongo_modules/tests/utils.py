@@ -23,7 +23,7 @@ class APIClient(object):
         while True:
             try:
                 return self.http.request(*args, **kwargs)
-            except:
+            except Exception:
                 time.sleep(0.5)
 
     def get(self, url, params=None):

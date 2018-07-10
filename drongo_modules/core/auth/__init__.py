@@ -1,1 +1,1 @@
-from .module import Auth
+from .module import Auth  # noqa: F401
