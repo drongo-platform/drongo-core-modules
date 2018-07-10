@@ -19,6 +19,7 @@ script:
   - pip install git+https://github.com/drongo-platform/drongo-core.git
   - flake8 drongo
   - flake8 nest
+  - flake8 drongo_utils
   - py.test --cov
 after_success:
   codecov
