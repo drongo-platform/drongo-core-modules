@@ -22,7 +22,8 @@ class AuthApp(Drongo):
             create_admin_user=True,
             admin_password='admin123',
             active_on_register=True,
-            token_age=0.1
+            token_secret='somerandomsecretfortest',
+            token_age=5
         )
         self.add_middleware(AuthMiddleware())
 

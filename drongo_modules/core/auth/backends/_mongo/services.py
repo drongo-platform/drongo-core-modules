@@ -1,13 +1,12 @@
-import uuid
-
-from datetime import datetime
+from datetime import datetime, timedelta
 
 from passlib.hash import pbkdf2_sha256
 
+import jwt
 import pymongo
 
 from .models import (
-    User, UserToken, Group, ObjectOwner, Permission, ObjectPermission
+    User, Group, ObjectOwner, Permission, ObjectPermission
 )
 
 
@@ -22,11 +21,6 @@ class AuthServiceBase(object):
         User.set_collection(
             module.database.instance.get_collection('auth_users'))
         User.__collection__.create_index([('username', pymongo.HASHED)])
-
-        UserToken.set_collection(
-            module.database.instance.get_collection('auth_user_tokens'))
-        UserToken.__collection__.create_index([('token', pymongo.HASHED)])
-        UserToken.__collection__.create_index([('expires', pymongo.ASCENDING)])
 
         Group.set_collection(
             module.database.instance.get_collection('auth_groups'))
@@ -64,17 +58,21 @@ class UserForTokenService(AuthServiceBase):
         self.token = token
 
     def call(self):
-        token = UserToken.objects.find_one(token=self.token)
+        token = self.token
 
         if token is None:
             return None
 
-        if token.expires < datetime.utcnow():
-            token.delete()
+        try:
+            token = jwt.decode(
+                token, self.module.config.token_secret, algorithms=['HS256'])
+        except jwt.ExpiredSignatureError:
+            return None
+        except Exception:
             return None
 
-        token.refresh(span=self.module.config.token_age)
-        return token.user
+        username = token.get('username')
+        return User.objects.find_one(username=username)
 
 
 class UserCreateService(AuthServiceBase):
@@ -125,19 +123,18 @@ class UserLoginService(AuthServiceBase):
 
     def create_token(self):
         user = User.objects.find_one(username=self.username, active=True)
-        token = UserToken.create(
-            user=user,
-            token=uuid.uuid4().hex
-        )
-        token.refresh(span=self.module.config.token_age)
-        return token.token
+        token = jwt.encode({
+            'username': user.username,
+            'iat': datetime.utcnow(),
+            'exp': datetime.utcnow()
+            + timedelta(seconds=self.module.config.token_age)
+        }, self.module.config.token_secret, algorithm='HS256')
+        return token.decode('ascii')
 
 
 class UserLogoutService(AuthServiceBase):
     def expire_token(self, token):
-        token = UserToken.objects.find_one(token=token)
-        if token is not None:
-            token.delete()
+        pass
 
     def call(self, ctx):
         pass

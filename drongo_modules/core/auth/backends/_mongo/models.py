@@ -1,5 +1,3 @@
-from datetime import datetime, timedelta
-
 from drongo_modules.core.database.utils.mongo_orm.document import Document
 
 
@@ -13,22 +11,6 @@ class User(Document):
         'created_on',
         'extras'
     ]
-
-
-class UserToken(Document):
-    __version__ = '1.0.0'
-    __fields__ = [
-        'user_id',
-        'token',
-        'expires'
-    ]
-    __resolve__ = {
-        'user': ('user_id', User)
-    }
-
-    def refresh(self, span):
-        self.expires = datetime.utcnow() + timedelta(minutes=span)
-        self.save()
 
 
 class Group(Document):

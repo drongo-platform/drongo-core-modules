@@ -20,7 +20,8 @@ class Auth(Module):
 
         'active_on_register': False,
 
-        'token_age': 7 * 24 * 60,  # A week (in minutes)
+        'token_secret': 'drongo.auth.secret',
+        'token_age': 7 * 24 * 60 * 60,  # A week (in seconds)
 
         # Validators
         'username_validator': UsernameValidator,
