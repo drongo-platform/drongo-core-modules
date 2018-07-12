@@ -145,6 +145,28 @@ class UserListService(AuthServiceBase):
         return User.objects.find()
 
 
+class UserActivateService(AuthServiceBase):
+    def __init__(self, username):
+        self.username = username
+
+    def call(self):
+        user = User.objects.find_one(username=self.username)
+        if user is not None:
+            user.active = True
+            user.save()
+
+
+class UserDeactivateService(AuthServiceBase):
+    def __init__(self, username):
+        self.username = username
+
+    def call(self):
+        user = User.objects.find_one(username=self.username)
+        if user is not None:
+            user.active = False
+            user.save()
+
+
 class GroupCreateService(AuthServiceBase):
     def __init__(self, name):
         self.name = name
