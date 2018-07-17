@@ -51,6 +51,6 @@ class Media(Module):
 
     def save_media(self, container, uploaded_file):
         return self.services.SaveMediaService(
-            container=self.container,
+            container=container,
             uploaded_file=uploaded_file
         ).call()
