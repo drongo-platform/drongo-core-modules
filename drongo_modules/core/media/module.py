@@ -54,3 +54,9 @@ class Media(Module):
             container=container,
             uploaded_file=uploaded_file
         ).call()
+
+    def delete_media(self, container, key):
+        return self.services.MediaDeleteService(
+            container=container,
+            key=key
+        ).call()
