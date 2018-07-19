@@ -45,13 +45,13 @@ class Document(object):
             return super(Document, self).__getattr__(name)
 
         elif name in self.__resolve__:
-            fld, klass = self.__resolve__[name]
+            fld, klass, key = self.__resolve__[name]
             if fld == '__inline__':
                 res = klass(self, name)
                 return res
             else:
                 if fld in self._data and self._data[fld] is not None:
-                    return klass.objects.find_one(_id=self._data[fld])
+                    return klass.objects.find_one(**{key: self._data[fld]})
                 else:
                     return None
 
