@@ -197,14 +197,21 @@ class UserList(APIEndpoint):
         self.auth = self.ctx.modules.auth
         self.user = self.ctx.auth.user
 
-    def validate(self):
-        if not self.user or not self.user.superuser:
+    def call(self):
+        if self.user is None:
             self.error(
                 group='_',
                 message='Access denied.'
             )
+            return
 
-    def call(self):
+        if not self.user.superuser:
+            return list(map(
+                lambda item: item.json(exclude=[
+                    'password', '_id', 'created_on']),
+                [self.user]
+            ))
+
         return list(map(
             lambda item: item.json(exclude=['password', '_id', 'created_on']),
             self.auth.services.UserListService().call(self.ctx)
