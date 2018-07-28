@@ -1,10 +1,8 @@
 <template>
   <div class="form__control">
     <label>{{ label }}</label>
-    <select :value="value" @input="updateValue($event.target.value)">
-      <option value="">None</option>
-      <option v-for="user in userList" :value="user.username" :key="user.username">{{ user.username }}</option>
-    </select>
+    <!-- <v-select :value="value" @input="updateValue($event)" :options="userList.map((item) => item.username)"></v-select> -->
+    <input type="text" :value="value" @input="updateValue($event.targe.value)" />
   </div>
 </template>
 
@@ -27,7 +25,7 @@
     },
 
     mounted () {
-      this.loadUsers()
+      // this.loadUsers()
     },
 
     data () {
