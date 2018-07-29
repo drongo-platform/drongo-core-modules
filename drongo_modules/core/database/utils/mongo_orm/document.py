@@ -111,10 +111,12 @@ class Document(object):
 
     def _resolve(self, result, fld):
         if isinstance(fld, dict):
-            for fld2, fld_resolve in fld.items():
+            for fld2, fld_options in fld.items():
                 result[fld2] = self.get(fld2)
                 if hasattr(result[fld2], 'json'):
-                    result[fld2] = result[fld2].json(resolve=fld_resolve)
+                    result[fld2] = result[fld2].json(
+                        resolve=fld_options.get('resolve', []),
+                        exclude=fld_options.get('exclude', []))
         else:
             result[fld] = self.get(fld)
             if hasattr(result[fld], 'json'):

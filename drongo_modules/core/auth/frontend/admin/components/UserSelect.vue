@@ -2,7 +2,7 @@
   <div class="form__control">
     <label>{{ label }}</label>
     <!-- <v-select :value="value" @input="updateValue($event)" :options="userList.map((item) => item.username)"></v-select> -->
-    <input type="text" :value="value" @input="updateValue($event.targe.value)" />
+    <input type="text" :value="value" @input="updateValue($event.target.value)" />
   </div>
 </template>
 
