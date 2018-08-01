@@ -10,6 +10,7 @@ class MediaServe(ViewEndpoint):
 
     def init(self):
         self.media = self.ctx.modules.media
+        self.token = self.ctx.request.query.get('token', [None])[0]
 
     def call(self):
         self.init()  # TODO: Fix this
@@ -18,7 +19,8 @@ class MediaServe(ViewEndpoint):
             container=self.container,
             key=self.key,
             query=self.ctx.request.query,
-            response=self.ctx.response
+            response=self.ctx.response,
+            token=self.token
         ).call()
 
 

@@ -6,6 +6,7 @@ import uuid
 
 from drongo import HttpResponseHeaders
 
+import jwt
 from PIL import Image
 
 from ... import models
@@ -17,6 +18,8 @@ class MediaServiceBase(object):
 
     ENABLE_TINYPNG = False
     TINYPNG_KEY = None
+
+    TOKEN_SECRET = 'DRONGOMEDIASUPERSECRET!@#123$%^456'
 
     @classmethod
     def init(cls, config):
@@ -91,11 +94,12 @@ class MediaListService(MediaServiceBase):
 
 
 class MediaServeService(MediaServiceBase):
-    def __init__(self, container, key, query, response):
+    def __init__(self, container, key, query, response, token=None):
         self.container = container
         self.key = key
         self.query = query
         self.response = response
+        self.token = token
 
     def _chunks(self, fd):
         for chunk in iter(partial(fd.read, 102400), b''):
@@ -139,6 +143,27 @@ class MediaServeService(MediaServiceBase):
             source.to_file(new_path)
 
     def serve(self, media_file):
+        if media_file.info.get('protected'):
+            if self.token is None:
+                self.response.set_content('Access denied!')
+                return
+
+            try:
+                token = jwt.decode(
+                    self.token, self.TOKEN_SECRET,
+                    algorithms=['HS256'])
+            except Exception:
+                self.response.set_content('Access denied!')
+                return
+
+            if not token:
+                self.response.set_content('Access denied!')
+                return
+
+            if token['container'] != self.container or token['key'] != self.key:
+                self.response.set_content('Access denied!')
+                return
+
         self.bake_query()
 
         fpath_base = media_file.info.get('physical_filepath')
@@ -167,11 +192,28 @@ class MediaServeService(MediaServiceBase):
             self.serve(media_file)
 
 
+class MediaIssueTokenService(MediaServiceBase):
+    def __init__(self, container, key):
+        self.container = container
+        self.key = key
+
+    def call(self):
+        token = jwt.encode({
+            'container': self.container,
+            'key': self.key,
+            'iat': datetime.utcnow(),
+            'exp': datetime.utcnow()
+            + timedelta(seconds=300)
+        }, self.TOKEN_SECRET, algorithm='HS256')
+        return token.decode('ascii')
+
+
 class SaveMediaService(MediaServiceBase):
-    def __init__(self, container, uploaded_file):
+    def __init__(self, container, uploaded_file, protected=False):
         self.container = container
         self.uploaded_file = uploaded_file
         self.key = uuid.uuid4().hex
+        self.protected = protected
 
     def call(self):
         fpath = os.path.join(
@@ -192,7 +234,8 @@ class SaveMediaService(MediaServiceBase):
         size = os.stat(fpath).st_size
         info = dict(
             filename=filename,
-            physical_filepath=fpath
+            physical_filepath=fpath,
+            protected=self.protected
         )
 
         SaveMediaInfo(

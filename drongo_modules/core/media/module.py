@@ -49,14 +49,21 @@ class Media(Module):
             base_url=self.config.base_url
         )
 
-    def save_media(self, container, uploaded_file):
+    def save_media(self, container, uploaded_file, protected=False):
         return self.services.SaveMediaService(
             container=container,
-            uploaded_file=uploaded_file
+            uploaded_file=uploaded_file,
+            protected=protected
         ).call()
 
     def delete_media(self, container, key):
         return self.services.MediaDeleteService(
+            container=container,
+            key=key
+        ).call()
+
+    def issue_token(self, container, key):
+        return self.services.MediaIssueTokenService(
             container=container,
             key=key
         ).call()
