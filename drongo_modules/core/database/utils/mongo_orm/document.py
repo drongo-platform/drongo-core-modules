@@ -51,7 +51,14 @@ class Document(object):
                 return res
             else:
                 if fld in self._data and self._data[fld] is not None:
-                    return klass.objects.find_one(**{key: self._data[fld]})
+                    val = self._data[fld]
+                    if isinstance(val, list):
+                        result = []
+                        for v in val:
+                            result.append(klass.objects.find_one(**{key: v}))
+                        return result
+                    else:
+                        return klass.objects.find_one(**{key: self._data[fld]})
                 else:
                     return None
 
@@ -109,18 +116,23 @@ class Document(object):
 
         return self
 
+    def _fix(self, obj, options={}):
+        if hasattr(obj, 'json'):
+            return obj.json(**options)
+
+        elif isinstance(obj, list):
+            return list(map(
+                lambda x: x.json(**options) if hasattr(x, 'json') else x,
+                obj
+            ))
+        return obj
+
     def _resolve(self, result, fld):
         if isinstance(fld, dict):
             for fld2, fld_options in fld.items():
-                result[fld2] = self.get(fld2)
-                if hasattr(result[fld2], 'json'):
-                    result[fld2] = result[fld2].json(
-                        resolve=fld_options.get('resolve', []),
-                        exclude=fld_options.get('exclude', []))
+                result[fld2] = self._fix(self.get(fld2), fld_options)
         else:
-            result[fld] = self.get(fld)
-            if hasattr(result[fld], 'json'):
-                result[fld] = result[fld].json()
+            result[fld] = self._fix(self.get(fld))
 
     def json(self, resolve=None, exclude=None):
         result = {}
