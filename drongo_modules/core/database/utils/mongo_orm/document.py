@@ -75,11 +75,11 @@ class Document(object):
             self._dirty = True
 
         elif name in self.__resolve__:
-            fld, klass = self.__resolve__[name]
+            fld, klass, key = self.__resolve__[name]
             if not isinstance(value, klass):
                 raise ValueError
-            self._data[fld] = value._id
-            self._changed[name] = value._id
+            self._data[fld] = value.get(key)
+            self._changed[name] = value.get(key)
         # else:
         #     raise AttributeError
 
