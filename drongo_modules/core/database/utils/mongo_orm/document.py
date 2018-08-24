@@ -9,8 +9,45 @@ class DocumentMeta(type):
         self.objects = DocumentManager(self)
 
 
+class DocumentCommonMixIn(object):
+    def _fix(self, obj, options={}):
+        if hasattr(obj, 'json'):
+            return obj.json(**options)
+
+        elif isinstance(obj, list):
+            return list(map(
+                lambda x: x.json(**options) if hasattr(x, 'json') else x,
+                obj
+            ))
+        return obj
+
+    def _resolve(self, result, fld):
+        if isinstance(fld, dict):
+            for fld2, fld_options in fld.items():
+                result[fld2] = self._fix(self.get(fld2), fld_options)
+        else:
+            result[fld] = self._fix(self.get(fld))
+
+    def json(self, resolve=None, exclude=None):
+        result = {}
+        result.update(self._data)
+        if '__ver' in result:
+            result.pop('__ver')
+
+        if resolve:
+            for fld in resolve:
+                self._resolve(result, fld)
+
+        if exclude:
+            for fld in exclude:
+                if fld in result:
+                    result.pop(fld)
+
+        return result
+
+
 @six.add_metaclass(DocumentMeta)
-class Document(object):
+class Document(DocumentCommonMixIn):
     __collection__ = None
     __history_collection__ = None
 
@@ -116,42 +153,8 @@ class Document(object):
 
         return self
 
-    def _fix(self, obj, options={}):
-        if hasattr(obj, 'json'):
-            return obj.json(**options)
 
-        elif isinstance(obj, list):
-            return list(map(
-                lambda x: x.json(**options) if hasattr(x, 'json') else x,
-                obj
-            ))
-        return obj
-
-    def _resolve(self, result, fld):
-        if isinstance(fld, dict):
-            for fld2, fld_options in fld.items():
-                result[fld2] = self._fix(self.get(fld2), fld_options)
-        else:
-            result[fld] = self._fix(self.get(fld))
-
-    def json(self, resolve=None, exclude=None):
-        result = {}
-        result.update(self._data)
-        result.pop('__ver')
-
-        if resolve:
-            for fld in resolve:
-                self._resolve(result, fld)
-
-        if exclude:
-            for fld in exclude:
-                if fld in result:
-                    result.pop(fld)
-
-        return result
-
-
-class MiniDocument(object):
+class MiniDocument(DocumentCommonMixIn):
     __collection__ = None
 
     __fields__ = []
@@ -181,10 +184,10 @@ class MiniDocument(object):
             return self._parent._data.get(self._name, {}).get(name)
 
         elif name in self.__resolve__:
-            fld, klass = self.__resolve__[name]
+            fld, klass, key = self.__resolve__[name]
             if fld in self._parent._data.get(self._name, {}):
                 return klass.objects.find_one(
-                    _id=self._parent._data.get(self._name, {})[fld])
+                    **{key: self._parent._data.get(self._name, {})[fld]})
             else:
                 return None
 
@@ -214,17 +217,6 @@ class MiniDocument(object):
     def __repr__(self):
         return '%s(**%s)' % (self.__class__.__name__, repr(self._data))
 
-    def json(self, resolve=None, exclude=None):
-        result = {}
-        result.update(self._parent._data.get(self._name, {}))
-
-        if resolve:
-            for fld in resolve:
-                result[fld] = getattr(self, fld).json()
-
-        if exclude:
-            for fld in exclude:
-                if fld in result:
-                    result.pop(fld)
-
-        return result
+    @property
+    def _data(self):
+        return self._parent._data.get(self._name)
