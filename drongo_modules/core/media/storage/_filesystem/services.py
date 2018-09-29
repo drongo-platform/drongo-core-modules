@@ -160,7 +160,8 @@ class MediaServeService(MediaServiceBase):
                 self.response.set_content('Access denied!')
                 return
 
-            if token['container'] != self.container or token['key'] != self.key:
+            if token['container'] != self.container \
+                    or token['key'] != self.key:
                 self.response.set_content('Access denied!')
                 return
 

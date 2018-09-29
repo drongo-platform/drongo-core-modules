@@ -1,1 +1,1 @@
-from .module import Email
+from .module import Email  # noqa: F401
