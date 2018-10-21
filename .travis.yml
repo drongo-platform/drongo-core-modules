@@ -13,9 +13,8 @@ matrix:
     - python: 3.6
     - python: 3.7
       dist: xenial
-    - python: pypy
-    - python: pypy3
-      dist: xenial
+    - python: pypy2.7
+    - python: pypy3.5
 
 before_install: "pip install codecov"
 install: "python setup.py install"
