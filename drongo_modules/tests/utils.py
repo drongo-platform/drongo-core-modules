@@ -44,6 +44,18 @@ class APIClient(object):
             headers=headers
         )
         return json.loads(r.data.decode('utf-8'))
+    
+    def post_raw(self, url, payload):
+        url = self.api_url + url
+        headers = {}
+        headers.update(self.headers)
+        r = self.request(
+            'POST',
+            url,
+            fields=payload,
+            headers=headers
+        )
+        return json.loads(r.data.decode('utf-8'))
 
     def put(self, url, payload):
         url = self.api_url + url
