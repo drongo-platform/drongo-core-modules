@@ -197,21 +197,16 @@ class UserList(APIEndpoint):
         self.auth = self.ctx.modules.auth
         self.user = self.ctx.auth.user
 
+    def validate(self):
+        if self.user and self.user.superuser:
+            return True
+
+        self.error(
+            group='_',
+            message='Access denied.'
+        )
+
     def call(self):
-        if self.user is None:
-            self.error(
-                group='_',
-                message='Access denied.'
-            )
-            return
-
-        if not self.user.superuser:
-            return list(map(
-                lambda item: item.json(exclude=[
-                    'password', '_id', 'created_on']),
-                [self.user]
-            ))
-
         return list(map(
             lambda item: item.json(exclude=['password', '_id', 'created_on']),
             self.auth.services.UserListService().call(self.ctx)
@@ -227,11 +222,13 @@ class GroupList(APIEndpoint):
         self.user = self.ctx.auth.user
 
     def validate(self):
-        if not self.user or not self.user.superuser:
-            self.error(
-                group='_',
-                message='Access denied.'
-            )
+        if self.user and self.user.superuser:
+            return True
+
+        self.error(
+            group='_',
+            message='Access denied.'
+        )
 
     def call(self):
         return list(map(
@@ -250,11 +247,13 @@ class GroupCreate(APIEndpoint):
         self.obj = self.ctx.request.json
 
     def validate(self):
-        if not self.user or not self.user.superuser:
-            self.error(
-                group='_',
-                message='Access denied.'
-            )
+        if self.user and self.user.superuser:
+            return True
+
+        self.error(
+            group='_',
+            message='Access denied.'
+        )
 
     def call(self):
         self.auth.services.GroupCreateService(name=self.obj['name']).call()
@@ -270,11 +269,13 @@ class GroupDelete(APIEndpoint):
         self.user = self.ctx.auth.user
 
     def validate(self):
-        if not self.user or not self.user.superuser:
-            self.error(
-                group='_',
-                message='Access denied.'
-            )
+        if self.user and self.user.superuser:
+            return True
+
+        self.error(
+            group='_',
+            message='Access denied.'
+        )
 
     def call(self):
         self.auth.services.GroupDeleteService(name=self.group).call()
@@ -290,11 +291,13 @@ class GroupUserAdd(APIEndpoint):
         self.user = self.ctx.auth.user
 
     def validate(self):
-        if not self.user or not self.user.superuser:
-            self.error(
-                group='_',
-                message='Access denied.'
-            )
+        if self.user and self.user.superuser:
+            return True
+
+        self.error(
+            group='_',
+            message='Access denied.'
+        )
 
     def call(self):
         self.auth.services.GroupUserAddService(
@@ -313,11 +316,13 @@ class GroupUserDelete(APIEndpoint):
         self.user = self.ctx.auth.user
 
     def validate(self):
-        if not self.user or not self.user.superuser:
-            self.error(
-                group='_',
-                message='Access denied.'
-            )
+        if self.user and self.user.superuser:
+            return True
+
+        self.error(
+            group='_',
+            message='Access denied.'
+        )
 
     def call(self):
         self.auth.services.GroupUserDeleteService(
@@ -334,11 +339,13 @@ class GroupUserList(APIEndpoint):
         self.user = self.ctx.auth.user
 
     def validate(self):
-        if not self.user or not self.user.superuser:
-            self.error(
-                group='_',
-                message='Access denied.'
-            )
+        if self.user and self.user.superuser:
+            return True
+
+        self.error(
+            group='_',
+            message='Access denied.'
+        )
 
     def call(self):
         return self.auth.services.GroupUserListService(name=self.group).call()
@@ -352,11 +359,13 @@ class GroupForUserList(APIEndpoint):
         self.user = self.ctx.auth.user
 
     def validate(self):
-        if not self.user or not self.user.superuser:
-            self.error(
-                group='_',
-                message='Access denied.'
-            )
+        if self.user and self.user.superuser:
+            return True
+
+        self.error(
+            group='_',
+            message='Access denied.'
+        )
 
     def call(self):
         return self.auth.services.GroupsForUserListService(
@@ -373,11 +382,13 @@ class ObjectOwnerSet(APIEndpoint):
         self.obj = self.ctx.request.json
 
     def validate(self):
-        if not self.user or not self.user.superuser:
-            self.error(
-                group='_',
-                message='Access denied.'
-            )
+        if self.user and self.user.superuser:
+            return True
+
+        self.error(
+            group='_',
+            message='Access denied.'
+        )
 
     def call(self):
         self.auth.services.ObjectOwnerSetService(
@@ -397,11 +408,13 @@ class ObjectOwnerGet(APIEndpoint):
         self.user = self.ctx.auth.user
 
     def validate(self):
-        if not self.user or not self.user.superuser:
-            self.error(
-                group='_',
-                message='Access denied.'
-            )
+        if self.user and self.user.superuser:
+            return True
+
+        self.error(
+            group='_',
+            message='Access denied.'
+        )
 
     def call(self):
         return self.auth.services.ObjectOwnerGetService(
@@ -420,11 +433,13 @@ class PermissionSet(APIEndpoint):
         self.obj = self.ctx.request.json
 
     def validate(self):
-        if not self.user or not self.user.superuser:
-            self.error(
-                group='_',
-                message='Access denied.'
-            )
+        if self.user and self.user.superuser:
+            return True
+
+        self.error(
+            group='_',
+            message='Access denied.'
+        )
 
     def call(self):
         self.auth.services.PermissionSetService(
@@ -444,11 +459,13 @@ class ObjectPermissionSet(APIEndpoint):
         self.obj = self.ctx.request.json
 
     def validate(self):
-        if not self.user or not self.user.superuser:
-            self.error(
-                group='_',
-                message='Access denied.'
-            )
+        if self.user and self.user.superuser:
+            return True
+
+        self.error(
+            group='_',
+            message='Access denied.'
+        )
 
     def call(self):
         self.auth.services.ObjectPermissionSetService(
@@ -470,11 +487,13 @@ class PermissionCheck(APIEndpoint):
         self.obj = self.ctx.request.json
 
     def validate(self):
-        if not self.user or not self.user.superuser:
-            self.error(
-                group='_',
-                message='Access denied.'
-            )
+        if self.user and self.user.superuser:
+            return True
+
+        self.error(
+            group='_',
+            message='Access denied.'
+        )
 
     def call(self):
         return self.auth.services.PermissionCheckService(
@@ -493,11 +512,13 @@ class ObjectPermissionCheck(APIEndpoint):
         self.obj = self.ctx.request.json
 
     def validate(self):
-        if not self.user or not self.user.superuser:
-            self.error(
-                group='_',
-                message='Access denied.'
-            )
+        if self.user and self.user.superuser:
+            return True
+
+        self.error(
+            group='_',
+            message='Access denied.'
+        )
 
     def call(self):
         return self.auth.services.ObjectPermissionCheckService(
