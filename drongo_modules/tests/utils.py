@@ -26,12 +26,18 @@ class APIClient(object):
             except Exception:
                 time.sleep(0.5)
 
+    def _response(self, resp):
+        if resp.headers['Content-Type'] == 'application/json':
+            return json.loads(resp.data.decode('utf-8'))
+        else:
+            return resp.data.decode('utf-8')
+
     def get(self, url, params=None):
         url = self.api_url + url
         headers = {}
         headers.update(self.headers)
         r = self.request('GET', url, params, headers=headers)
-        return json.loads(r.data.decode('utf-8'))
+        return self._response(r)
 
     def post(self, url, payload):
         url = self.api_url + url
@@ -43,7 +49,7 @@ class APIClient(object):
             body=json.dumps(payload).encode('utf-8'),
             headers=headers
         )
-        return json.loads(r.data.decode('utf-8'))
+        return self._response(r)
 
     def post_raw(self, url, payload):
         url = self.api_url + url
@@ -55,7 +61,7 @@ class APIClient(object):
             fields=payload,
             headers=headers
         )
-        return json.loads(r.data.decode('utf-8'))
+        return self._response(r)
 
     def put(self, url, payload):
         url = self.api_url + url
@@ -67,14 +73,14 @@ class APIClient(object):
             body=json.dumps(payload).encode('utf-8'),
             headers=headers
         )
-        return json.loads(r.data.decode('utf-8'))
+        return self._response(r)
 
     def delete(self, url):
         url = self.api_url + url
         headers = {}
         headers.update(self.headers)
         r = self.request('DELETE', url, headers=headers)
-        return json.loads(r.data.decode('utf-8'))
+        return self._response(r)
 
 
 class AppServer(object):
