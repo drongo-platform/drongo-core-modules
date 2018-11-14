@@ -1,14 +1,10 @@
 from datetime import datetime, timedelta
 
-from passlib.hash import pbkdf2_sha256
-
 import jwt
 import pymongo
+from passlib.hash import pbkdf2_sha256
 
-from .models import (
-    User, Group, ObjectOwner, Permission, ObjectPermission
-)
-
+from .models import Group, ObjectOwner, ObjectPermission, Permission, User
 
 HASHER = pbkdf2_sha256.using(rounds=10000)
 
@@ -138,6 +134,29 @@ class UserLogoutService(AuthServiceBase):
 
     def call(self, ctx):
         pass
+
+
+class UserTokenRefresh(AuthServiceBase):
+    def __init__(self, token):
+        self.token = token
+
+    def call(self):
+        try:
+            token = jwt.decode(
+                self.token, self.module.config.token_secret,
+                algorithms=['HS256'])
+            token.update({
+                'iat': datetime.utcnow(),
+                'exp': datetime.utcnow()
+                + timedelta(seconds=self.module.config.token_age)
+            })
+            return jwt.encode(
+                token, self.module.config.token_secret, algorithm='HS256'
+            ).decode('ascii')
+        except jwt.ExpiredSignatureError:
+            return None
+        except Exception:
+            return None
 
 
 class UserListService(AuthServiceBase):

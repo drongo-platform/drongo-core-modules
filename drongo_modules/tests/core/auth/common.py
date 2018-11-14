@@ -47,6 +47,12 @@ class AuthClient(object):
         else:
             raise Exception('Login error!')
 
+    def refresh(self):
+        resp = self.client.get(
+            '/auth/users/operations/refresh-token')
+        new_token = resp['payload']['token']
+        self.client.set_auth_token(new_token)
+
     def logout(self):
         self.client.get('/auth/users/operations/logout')
         self.client.set_auth_token(None)

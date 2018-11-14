@@ -1,6 +1,5 @@
 from drongo.status_codes import HttpStatusCodes
 from drongo.utils import dict2
-
 from drongo_utils.endpoint import APIEndpoint
 from drongo_utils.helpers import URLHelper
 
@@ -187,6 +186,20 @@ class UserLogout(APIEndpoint):
         self.auth.services.UserLogoutService().expire_token(self.token)
         self.status(HttpStatusCodes.HTTP_202)
         return 'Bye!'
+
+
+class UserTokenRefresh(APIEndpoint):
+    __url__ = '/users/operations/refresh-token'
+    __http_methods__ = ['GET']
+
+    def init(self):
+        self.auth = self.ctx.modules.auth
+        self.token = self.ctx.auth.get('token')
+
+    def call(self):
+        token = self.auth.services.UserTokenRefresh(self.token).call()
+        print('ISSUED TOKEN', token)
+        return {'token': token}
 
 
 class UserList(APIEndpoint):
@@ -534,6 +547,7 @@ AVAILABLE_API = [
     UserCreate,
     UserLogin,
     UserLogout,
+    UserTokenRefresh,
     UserChangePassword,
     UserList,
 

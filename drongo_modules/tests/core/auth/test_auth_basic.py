@@ -1,11 +1,10 @@
 import time
-
 from unittest import TestCase
 
 from pymongo import MongoClient
 
+from ...utils import APIClient, AppServer
 from .common import AuthApp, AuthClient
-from ...utils import AppServer, APIClient
 
 
 class TestAuthBasic(TestCase):
@@ -49,6 +48,17 @@ class TestAuthBasic(TestCase):
         me = self.auth_client.me()
         self.assertEqual(me['username'], 'admin')
         time.sleep(10)
+        self.assertIsNone(self.auth_client.me())
+
+    def test_token_refresh(self):
+        self.auth_client.login('admin', 'admin123')
+        me = self.auth_client.me()
+        self.assertEqual(me['username'], 'admin')
+        time.sleep(3)
+        self.auth_client.refresh()
+        time.sleep(3)
+        self.assertEqual(me['username'], 'admin')
+        self.auth_client.logout()
         self.assertIsNone(self.auth_client.me())
 
     def test_register(self):
