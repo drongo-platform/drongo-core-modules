@@ -1,4 +1,4 @@
-drongo-core==1.0.0
+drongo-core==1.0.1
 flake8==3.5.0
 future==0.16.0
 mongobj==1.0.0
