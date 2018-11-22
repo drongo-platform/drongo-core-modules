@@ -1,4 +1,4 @@
-from drongo_modules.core.database.utils.mongo_orm.document import Document
+from mongobj.document import Document
 
 
 class User(Document):
