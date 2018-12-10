@@ -6,7 +6,7 @@ services:
 before_script:
   - sleep 15
   - psql -c 'create database drongo;' -U postgres
-  - psql -c 'create user drongo with password "drongo";' -U postgres
+  - psql -c 'create user drongo with password drongo;' -U postgres
   - psql -c 'grant all privileges on drongo to drongo;' -U postgres
 
 matrix:
