@@ -1,3 +1,5 @@
+import time
+
 from drongo import Drongo
 
 
@@ -20,6 +22,7 @@ class AuthApp(Drongo):
         # Delete all tables
         _db = db.instance.get()
         _db.execute_sql('drop owned by drongo;')
+        time.sleep(1)
 
         Auth(
             self,
