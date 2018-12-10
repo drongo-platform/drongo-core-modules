@@ -19,8 +19,7 @@ class AuthApp(Drongo):
 
         # Delete all tables
         _db = db.instance.get()
-        for table in _db.get_tables():
-            _db.execute_sql('drop table "{table}";'.format(table=table))
+        _db.execute_sql('drop owned by drongo;')
 
         Auth(
             self,
