@@ -1,11 +1,10 @@
 import logging
 
 from drongo_modules.core.database import Database
-
 from drongo_modules.core.module import Module
 
 from .middleware import AuthMiddleware
-from .validators import UsernameValidator, PasswordValidator
+from .validators import PasswordValidator, UsernameValidator
 
 
 class Auth(Module):
@@ -39,6 +38,10 @@ class Auth(Module):
 
         if self.database.type == Database.MONGO:
             from .backends._mongo import services
+            self.services = services
+
+        elif self.database.type == Database.POSTGRES:
+            from .backends._postgres import services
             self.services = services
 
         else:

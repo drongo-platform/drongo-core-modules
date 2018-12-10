@@ -1,8 +1,13 @@
 language: python
 services:
   - mongodb
+  - postgresql
+
 before_script:
   - sleep 15
+  - psql -c 'create database drongo;' -U postgres
+  - psql -c 'create user drongo with password "drongo";' -U postgres
+  - psql -c 'grant all privileges on drongo to drongo;' -U postgres
 
 matrix:
   include:
@@ -22,5 +27,4 @@ script:
   - pip install -r requirements.txt
   - flake8 drongo_modules
   - py.test --cov
-after_success:
-  codecov
+after_success: codecov

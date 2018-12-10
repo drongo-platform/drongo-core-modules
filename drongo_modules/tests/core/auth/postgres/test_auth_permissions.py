@@ -3,8 +3,8 @@ from unittest import TestCase
 from bson.objectid import ObjectId
 from pymongo import MongoClient
 
+from ....utils import APIClient, AppServer
 from .common import AuthApp, AuthClient
-from ...utils import AppServer, APIClient
 
 
 class TestAuthPermissions(TestCase):
@@ -34,6 +34,7 @@ class TestAuthPermissions(TestCase):
 
         self.auth_client.create_group('group1')
         self.auth_client.create_group('group2')
+        self.auth_client.create_group('group3')
 
         self.auth_client.add_user_to_group('group1', 'user1')
         self.auth_client.add_user_to_group('group1', 'user2')
@@ -41,6 +42,7 @@ class TestAuthPermissions(TestCase):
         self.auth_client.add_user_to_group('group2', 'user3')
         self.auth_client.add_user_to_group('group2', 'user4')
         self.auth_client.add_user_to_group('group2', 'user5')
+        self.auth_client.add_user_to_group('group3', 'user4')
 
         self.obj1 = str(ObjectId())
         self.obj2 = str(ObjectId())

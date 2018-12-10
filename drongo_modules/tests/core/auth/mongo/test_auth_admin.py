@@ -2,8 +2,8 @@ from unittest import TestCase
 
 from pymongo import MongoClient
 
+from ....utils import APIClient, AppServer
 from .common import AuthApp, AuthClient
-from ...utils import AppServer, APIClient
 
 
 class TestAuthAdmin(TestCase):

@@ -1,29 +1,25 @@
-import pymysql
-import pymysql.cursors
+from peewee import PostgresqlDatabase
 
 DEFAULT_HOST = 'localhost'
-DEFAULT_PORT = 3306
-DEFAULT_CHARSET = 'utf8'
+DEFAULT_PORT = 5432
 
 
-class MysqlDatabase(object):
+class PostgresDatabase(object):
     def __init__(self, app, config):
         host = config.get('host', DEFAULT_HOST)
         port = config.get('port', DEFAULT_PORT)
         user = config.get('user')
         password = config.get('password')
         name = config.get('name')
-        charset = config.get('charset', DEFAULT_CHARSET)
 
-        self.connection = pymysql.connect(
+        self.connection = PostgresqlDatabase(
             host=host,
             port=port,
             user=user,
             password=password,
-            db=name,
-            charset=charset,
-            cursorclass=pymysql.cursors.DictCursor
+            database=name
         )
+        self.connection.connect()
 
     def get(self):
         return self.connection

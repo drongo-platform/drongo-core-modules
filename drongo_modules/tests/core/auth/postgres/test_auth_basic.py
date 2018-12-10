@@ -1,17 +1,13 @@
 import time
 from unittest import TestCase
 
-from pymongo import MongoClient
-
-from ...utils import APIClient, AppServer
+from ....utils import APIClient, AppServer
 from .common import AuthApp, AuthClient
 
 
 class TestAuthBasic(TestCase):
     @classmethod
     def setUpClass(cls):
-        db_client = MongoClient()
-        db_client.drop_database('drongo_master')
         cls.app = AuthApp()
         cls.app.init()
         cls.server = AppServer(app=cls.app)

@@ -3,8 +3,8 @@ from unittest import TestCase
 from bson.objectid import ObjectId
 from pymongo import MongoClient
 
+from ....utils import APIClient, AppServer
 from .common import AuthApp, AuthClient
-from ...utils import AppServer, APIClient
 
 
 class TestAuthOwnership(TestCase):

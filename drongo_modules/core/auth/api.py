@@ -219,9 +219,15 @@ class UserList(APIEndpoint):
             message='Access denied.'
         )
 
+    def _transform(self, obj):
+        return {
+            'username': obj.username,
+            'superuser': obj.superuser
+        }
+
     def call(self):
         return list(map(
-            lambda item: item.json(exclude=['password', '_id', 'created_on']),
+            self._transform,
             self.auth.services.UserListService().call(self.ctx)
         ))
 
@@ -243,9 +249,15 @@ class GroupList(APIEndpoint):
             message='Access denied.'
         )
 
+    def _transform(self, obj):
+        return {
+            'name': obj.name,
+            'users': obj.users
+        }
+
     def call(self):
         return list(map(
-            lambda item: item.json(),
+            self._transform,
             self.auth.services.GroupListService().call()
         ))
 

@@ -7,6 +7,7 @@ class Database(Module):
     # Database types
     MONGO = 'mongo'
     MYSQL = 'mysql'
+    POSTGRES = 'postgres'
     REDIS = 'redis'
 
     logger = logging.getLogger('drongo_modules.core.database')
@@ -32,6 +33,10 @@ class Database(Module):
         elif self._type == self.MYSQL:
             from .databases._mysql import MysqlDatabase
             klass = MysqlDatabase
+
+        elif self._type == self.POSTGRES:
+            from .databases._postgres import PostgresDatabase
+            klass = PostgresDatabase
 
         else:
             self.logger.error('Unknown database type!')
