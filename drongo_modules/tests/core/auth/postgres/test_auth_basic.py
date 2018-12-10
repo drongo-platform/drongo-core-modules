@@ -16,6 +16,7 @@ class TestAuthBasic(TestCase):
     @classmethod
     def tearDownClass(cls):
         cls.server.stop()
+        cls.app.deinit()
 
     def setUp(self):
         self.client = APIClient(api_url='http://localhost:12345/api')

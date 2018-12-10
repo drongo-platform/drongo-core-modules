@@ -10,7 +10,7 @@ class AuthApp(Drongo):
 
         from drongo_modules.core.database import Database
 
-        db = Database(
+        self.db = db = Database(
             self,
             _id='main',
             name='drongo',
@@ -35,6 +35,11 @@ class AuthApp(Drongo):
             token_age=5
         )
         self.add_middleware(AuthMiddleware())
+
+    def deinit(self):
+        _db = self.db.instance.get()
+        _db.execute_sql('drop owned by drongo;')
+        time.sleep(1)
 
 
 class AuthClient(object):
