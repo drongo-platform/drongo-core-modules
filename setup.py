@@ -23,7 +23,6 @@ setup(
     packages=find_packages(),
     include_package_data=True,
     install_requires=[
-        'drongo-core==1.0.1'
     ],
     zip_safe=True
 )
