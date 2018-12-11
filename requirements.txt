@@ -1,4 +1,4 @@
-drongo-core==1.0.1
+drongo-core==1.0.2
 flake8
 mongobj==1.0.0
 passlib
