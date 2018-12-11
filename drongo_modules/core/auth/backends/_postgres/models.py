@@ -15,9 +15,6 @@ class User(Model):
     class Meta:
         database = db
         table_name = 'auth_users'
-        indexes = (
-            (('username',), True),
-        )
 
 
 class Group(Model):
