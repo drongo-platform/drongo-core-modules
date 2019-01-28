@@ -49,6 +49,8 @@ class TestAuthPermissions(TestCase):
 
         self.auth_client.permission_set('blog.category.create', 'user.user1')
         self.auth_client.permission_set('blog.category.create', 'group.group2')
+        self.auth_client.permission_set('blog.category.create', 'user.user2')
+        self.auth_client.permission_unset('blog.category.create', 'user.user2')
         self.auth_client.object_permission_set(
             'blog.post', self.obj1, 'blog.post.write', 'user.user1')
         self.auth_client.object_permission_set(
@@ -81,3 +83,7 @@ class TestAuthPermissions(TestCase):
         self.assertFalse(
             self.auth_client.object_permission_check(
                 'blog.post', self.obj2, 'blog.post.write', 'user1'))
+
+    def test_query(self):
+        self.assertIn('blog.category.create',
+                      self.auth_client.permission_list('user.user1'))

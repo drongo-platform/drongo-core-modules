@@ -75,11 +75,15 @@ class APIClient(object):
         )
         return self._response(r)
 
-    def delete(self, url):
+    def delete(self, url, payload={}):
         url = self.api_url + url
-        headers = {}
+        headers = {'Content-Type': 'application/json'}
         headers.update(self.headers)
-        r = self.request('DELETE', url, headers=headers)
+        r = self.request(
+            'DELETE',
+            url,
+            body=json.dumps(payload).encode('utf-8'),
+            headers=headers)
         return self._response(r)
 
 

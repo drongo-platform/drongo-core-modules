@@ -188,3 +188,10 @@ class AuthClient(object):
         )
         if resp['status'] == 'OK':
             return resp['payload']
+
+    def permission_list(self, client):
+        resp = self.client.get(
+            '/auth/permissions/for/{client}'.format(
+                client=client))
+        if resp['status'] == 'OK':
+            return resp['payload']

@@ -317,6 +317,20 @@ class PermissionSetService(AuthServiceBase):
             )
 
 
+class PermissionUnsetService(AuthServiceBase):
+    def __init__(self, permission_id, client):
+        self.permission_id = permission_id
+        self.client = client
+
+    def call(self):
+        permission = Permission.get_or_none(
+            permission_id=self.permission_id,
+            client=self.client
+        )
+        if permission is not None:
+            permission.delete_instance()
+
+
 class ObjectPermissionCheckService(AuthServiceBase):
     def __init__(self, object_type, object_id, permission_id, username):
         self.object_type = object_type
@@ -379,3 +393,32 @@ class ObjectPermissionSetService(AuthServiceBase):
                 permission_id=self.permission_id,
                 client=self.client
             )
+
+
+class ObjectPermissionUnsetService(AuthServiceBase):
+    def __init__(self, object_type, object_id, permission_id, client):
+        self.object_type = object_type
+        self.object_id = object_id
+        self.permission_id = permission_id
+        self.client = client
+
+    def call(self):
+        permission = ObjectPermission.get_or_none(
+            object_type=self.object_type,
+            object_id=self.object_id,
+            permission_id=self.permission_id,
+            client=self.client
+        )
+        if permission is not None:
+            permission.delete_instance()
+
+
+class PermissionListForClientService(AuthServiceBase):
+    def __init__(self, client):
+        self.client = client
+
+    def call(self):
+        return list(map(
+            lambda item: item.permission_id,
+            Permission.select().where(Permission.client == self.client)
+        ))

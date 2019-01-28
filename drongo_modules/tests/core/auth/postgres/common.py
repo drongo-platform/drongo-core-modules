@@ -165,12 +165,33 @@ class AuthClient(object):
             data
         )
 
+    def permission_unset(self, permission_id, client):
+        data = dict(client=client)
+        self.client.post(
+            '/auth/permissions/{permission_id}/unset'.format(
+                permission_id=permission_id),
+            data
+        )
+
     def object_permission_set(self, object_type, object_id, permission_id,
                               client):
         data = dict(client=client)
         self.client.post(
             '/auth/permissions/{permission_id}/objects/'
             '{object_type}/{object_id}'.format(
+                object_type=object_type,
+                object_id=object_id,
+                permission_id=permission_id
+            ),
+            data
+        )
+
+    def object_permission_unset(self, object_type, object_id, permission_id,
+                                client):
+        data = dict(client=client)
+        self.client.post(
+            '/auth/permissions/{permission_id}/objects/'
+            '{object_type}/{object_id}/unset'.format(
                 object_type=object_type,
                 object_id=object_id,
                 permission_id=permission_id
@@ -200,5 +221,12 @@ class AuthClient(object):
             ),
             data
         )
+        if resp['status'] == 'OK':
+            return resp['payload']
+
+    def permission_list(self, client):
+        resp = self.client.get(
+            '/auth/permissions/for/{client}'.format(
+                client=client))
         if resp['status'] == 'OK':
             return resp['payload']

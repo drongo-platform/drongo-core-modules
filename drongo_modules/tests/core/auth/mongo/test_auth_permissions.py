@@ -79,3 +79,7 @@ class TestAuthPermissions(TestCase):
         self.assertFalse(
             self.auth_client.object_permission_check(
                 'blog.post', self.obj2, 'blog.post.write', 'user1'))
+
+    def test_query(self):
+        self.assertIn('blog.category.create',
+                      self.auth_client.permission_list('user.user1'))

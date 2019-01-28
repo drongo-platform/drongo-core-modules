@@ -198,7 +198,6 @@ class UserTokenRefresh(APIEndpoint):
 
     def call(self):
         token = self.auth.services.UserTokenRefresh(self.token).call()
-        print('ISSUED TOKEN', token)
         return {'token': token}
 
 
@@ -475,6 +474,32 @@ class PermissionSet(APIEndpoint):
         return 'OK'
 
 
+class PermissionUnset(APIEndpoint):
+    __url__ = '/permissions/{_id}/unset'
+    __http_methods__ = 'POST'
+
+    def init(self):
+        self.auth = self.ctx.modules.auth
+        self.user = self.ctx.auth.user
+        self.obj = self.ctx.request.json
+
+    def validate(self):
+        if self.user and self.user.superuser:
+            return True
+
+        self.error(
+            group='_',
+            message='Access denied.'
+        )
+
+    def call(self):
+        self.auth.services.PermissionUnsetService(
+            permission_id=self._id,
+            client=self.obj.get('client')
+        ).call()
+        return 'OK'
+
+
 class ObjectPermissionSet(APIEndpoint):
     __url__ = '/permissions/{_id}/objects/{object_type}/{object_id}'
     __http_methods__ = 'POST'
@@ -495,6 +520,34 @@ class ObjectPermissionSet(APIEndpoint):
 
     def call(self):
         self.auth.services.ObjectPermissionSetService(
+            object_type=self.object_type,
+            object_id=self.object_id,
+            permission_id=self._id,
+            client=self.obj.get('client')
+        ).call()
+        return 'OK'
+
+
+class ObjectPermissionUnset(APIEndpoint):
+    __url__ = '/permissions/{_id}/objects/{object_type}/{object_id}/unset'
+    __http_methods__ = 'POST'
+
+    def init(self):
+        self.auth = self.ctx.modules.auth
+        self.user = self.ctx.auth.user
+        self.obj = self.ctx.request.json
+
+    def validate(self):
+        if self.user and self.user.superuser:
+            return True
+
+        self.error(
+            group='_',
+            message='Access denied.'
+        )
+
+    def call(self):
+        self.auth.services.ObjectPermissionUnsetService(
             object_type=self.object_type,
             object_id=self.object_id,
             permission_id=self._id,
@@ -555,6 +608,29 @@ class ObjectPermissionCheck(APIEndpoint):
         ).call()
 
 
+class PermissionList(APIEndpoint):
+    __url__ = '/permissions/for/{client}'
+    __http_methods__ = 'GET'
+
+    def init(self):
+        self.auth = self.ctx.modules.auth
+        self.user = self.ctx.auth.user
+
+    def validate(self):
+        if self.user and self.user.superuser:
+            return True
+
+        self.error(
+            group='_',
+            message='Access denied.'
+        )
+
+    def call(self):
+        return self.auth.services.PermissionListForClientService(
+            client=self.client
+        ).call()
+
+
 AVAILABLE_API = [
     UserMe,
     UserCreate,
@@ -577,9 +653,13 @@ AVAILABLE_API = [
     ObjectOwnerGet,
 
     PermissionSet,
+    PermissionUnset,
     ObjectPermissionSet,
+    ObjectPermissionUnset,
     PermissionCheck,
-    ObjectPermissionCheck
+    ObjectPermissionCheck,
+
+    PermissionList
 ]
 
 
