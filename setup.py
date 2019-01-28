@@ -4,7 +4,7 @@ from setuptools import find_packages, setup
 
 setup(
     name='drongo-core-modules',
-    version='1.1.1',
+    version='1.1.2',
     description='Core modules for drongo.',
     author='Sattvik Chakravarthy',
     author_email='sattvik@gmail.com',

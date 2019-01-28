@@ -8,6 +8,9 @@ class AuthMiddleware(object):
             self.load_user_from_token(ctx, token)
 
     def load_user_from_token(self, ctx, token):
+        # Preprocess token
+        if 'Bearer' in token:
+            _, token = token.split(' ', 1)
         auth = ctx.modules.auth
         user_token_svc = auth.services.UserForTokenService(token=token)
 

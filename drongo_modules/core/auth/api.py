@@ -222,6 +222,7 @@ class UserList(APIEndpoint):
     def _transform(self, obj):
         return {
             'username': obj.username,
+            'active': obj.active,
             'superuser': obj.superuser
         }
 
